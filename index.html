@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Opportunities - Steadfast Staffing</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      padding: 40px;
+      background: linear-gradient(135deg, #2c5282 0%, #2d3748 100%);
+      min-height: 100vh;
+      color: #2d3748;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 36px;
+      margin-bottom: 30px;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      letter-spacing: -0.5px;
+    }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    input, select, .job-select {
+      padding: 12px 16px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #2d3748;
+      transition: all 0.3s ease;
+      outline: none;
+      min-width: 200px;
+    }
+
+    input:focus, select:focus, .job-select:focus {
+      border-color: #3182ce;
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+
+    .job-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    input.location-error {
+      border-color: #e53e3e;
+      background: #fef5f5;
+    }
+
+    input.location-loading {
+      border-color: #f6ad55;
+      background: #fffaf0;
+    }
+
+    .show-all-btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      background: #3182ce;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(49, 130, 206, 0.3);
+    }
+
+    .show-all-btn:hover {
+      background: #2c5282;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(49, 130, 206, 0.4);
+    }
+
+    .show-all-btn:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #results {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      color: #2d3748;
+    }
+
+    .results-count {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .sort-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .sort-controls select {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .category {
+      margin-top: 40px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #2c5282;
+      border-bottom: 2px solid #3182ce;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+    }
+
+    .job {
+      border: none;
+      padding: 25px;
+      margin: 20px 0;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      border-left: 4px solid #3182ce;
+    }
+
+    .job:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .job h3 {
+      margin: 0 0 15px 0;
+      font-size: 22px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .job p {
+      margin: 8px 0;
+      font-weight: 400;
+      line-height: 1.6;
+      color: #4a5568;
+    }
+
+    .job p strong {
+      color: #2d3748;
+      font-weight: 600;
+    }
+
+    .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .job-meta span {
+      background: #f7fafc;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2d3748;
+    }
+
+    .distance-badge {
+      background: #e6fffa !important;
+      color: #234e52 !important;
+      border: 1px solid #4fd1c7;
+    }
+
+    .job a {
+      display: inline-block;
+      margin-top: 15px;
+      color: white;
+      background: #3182ce;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(49, 130, 206, 0.3);
+    }
+
+    .job a:hover {
+      background: #2c5282;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+    }
+
+    .search-prompt {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      margin-top: 30px;
+      color: #4a5568;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border-left: 4px solid #3182ce;
+    }
+
+    .search-prompt h3 {
+      margin-top: 0;
+      color: #2d3748;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .search-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      backdrop-filter: blur(10px);
+      border: 2px solid #e2e8f0;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 250px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 500;
+      color: #2d3748;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background: #f7fafc;
+      color: #3182ce;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item.category-header {
+      background: #f0f4f8;
+      font-weight: 600;
+      color: #2c5282;
+      cursor: pointer;
+      border-left: 3px solid #3182ce;
+    }
+
+    .dropdown-item.category-header:hover {
+      background: #e2e8f0;
+      color: #2c5282;
+    }
+
+    .dropdown-item.job-item {
+      padding: 10px 16px;
+      border-left: 1px solid #e2e8f0;
+      margin-left: 8px;
+    }
+
+    .dropdown-item.job-item:hover {
+      background: #f7fafc;
+      border-left-color: #3182ce;
+    }
+
+    .job-dropdown-title {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 2px;
+    }
+
+    .job-dropdown-meta {
+      font-size: 12px;
+      color: #718096;
+    }
+
+    .dropdown-item.title-match {
+      background: #e6fffa;
+      border-left: 3px solid #38a169;
+      font-weight: 600;
+      color: #234e52;
+    }
+
+    .dropdown-item.title-match:hover {
+      background: #b2f5ea;
+    }
+
+    .dropdown-item.view-more {
+      background: #fef5e7;
+      color: #744210;
+      font-style: italic;
+      text-align: center;
+      border-left: 3px solid #f6ad55;
+    }
+
+    .dropdown-item.view-more:hover {
+      background: #faf089;
+    }
+
+    .dropdown-item mark {
+      background: #fef5e7;
+      color: #744210;
+      padding: 1px 2px;
+      border-radius: 2px;
+    }
+
+    /* Location button styles */
+    .location-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      background: #3182ce;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(49, 130, 206, 0.3);
+    }
+
+    .location-btn:hover {
+      background: #2c5282;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.4);
+    }
+
+    .location-btn:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .location-btn.loading {
+      background: #f6ad55;
+      animation: pulse 1.5s infinite;
+    }
+
+    .location-btn.success {
+      background: #38a169;
+    }
+
+    .location-btn.error {
+      background: #e53e3e;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    .location-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .location-status {
+      position: absolute;
+      top: -28px;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 1001;
+      display: none;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .location-status.success {
+      color: #22543d;
+      background: rgba(198, 246, 213, 0.95);
+      border-color: rgba(154, 230, 180, 0.5);
+    }
+
+    .location-status.error {
+      color: #c53030;
+      background: rgba(254, 215, 215, 0.95);
+      border-color: rgba(254, 178, 178, 0.5);
+    }
+
+    .location-status.loading {
+      color: #744210;
+      background: rgba(254, 245, 231, 0.95);
+      border-color: rgba(246, 173, 85, 0.5);
+    }
+
+    .location-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      backdrop-filter: blur(10px);
+      border: 2px solid #e2e8f0;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .location-dropdown-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 500;
+      color: #2d3748;
+      transition: all 0.2s ease;
+    }
+
+    .location-dropdown-item:hover {
+      background: #f7fafc;
+      color: #3182ce;
+    }
+
+    .location-dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .location-main {
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .location-sub {
+      font-size: 0.85rem;
+      color: #718096;
+      margin-top: 2px;
+    }
+
+    .error-message {
+      background: #fed7d7;
+      color: #c53030;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+      border: 1px solid #feb2b2;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: #4a5568;
+    }
+
+    .no-results h3 {
+      color: #2d3748;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .filters {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .results-header {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .job-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      body {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Current Job Openings at Steadfast Staffing</h2>
+
+  <div class="filters">
+    <div class="location-container">
+      <input id="userLocation" placeholder="Enter your city or ZIP" />
+      <button class="location-btn" onclick="getCurrentLocation()" title="Use my current location">
+        <span id="locationIcon">📍</span>
+        <span id="locationText">Use Current</span>
+      </button>
+      <div id="locationDropdown" class="location-dropdown"></div>
+    </div>
+    <div class="search-container">
+      <select id="jobSearch" class="job-select">
+        <option value="">Select a job title...</option>
+      </select>
+      <div id="dropdown" class="dropdown"></div>
+    </div>
+    <select id="distanceFilter">
+      <option value="">Any Distance</option>
+      <option value="5">5 miles</option>
+      <option value="10">10 miles</option>
+      <option value="25">25 miles</option>
+      <option value="50">50 miles</option>
+      <option value="100">100 miles</option>
+    </select>
+    <button class="show-all-btn" onclick="showAllJobs()">Show All</button>
+    <button class="show-all-btn" onclick="clearFilters()">Clear</button>
+  </div>
+
+  <div id="results"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDtgmr4F5uRh4M_6OVQAd-7X3ZyLqmS0-I",
+      authDomain: "steadfast-staffing.firebaseapp.com",
+      databaseURL: "https://steadfast-staffing-default-rtdb.firebaseio.com",
+      projectId: "steadfast-staffing",
+      storageBucket: "steadfast-staffing.firebasestorage.app",
+      messagingSenderId: "447949048982",
+      appId: "1:447949048982:web:ae07174035184d4d0a86b7"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let allJobs = [];
+    let userLat = null;
+    let userLon = null;
+    let hasSearched = false;
+    let selectedJobTitle = '';
+    let currentJobs = [];
+    let isLoading = false;
+    let geocodeCache = new Map();
+    let locationTimeout = null;
+
+    // Load jobs from Firebase
+    function loadJobsFromFirebase() {
+      console.log('Loading jobs from Firebase...');
+      
+      database.ref('jobs').orderByChild('status').equalTo('active').on('value', (snapshot) => {
+        allJobs = [];
+        const data = snapshot.val();
+        
+        if (data) {
+          Object.keys(data).forEach(key => {
+            allJobs.push({
+              id: key,
+              title: data[key].title || 'Untitled Job',
+              location: data[key].location || 'Location TBD',
+              type: data[key].type || 'Full-time',
+              category: data[key].category || 'Other',
+              description: data[key].description || 'No description available',
+              apply: data[key].apply || '#',
+              lat: data[key].lat || null,
+              lon: data[key].lon || null,
+              salary: data[key].salary || null,
+              datePosted: data[key].datePosted || null
+            });
+          });
+        }
+        
+        console.log('Loaded', allJobs.length, 'jobs from Firebase');
+        populateJobDropdown();
+        setupJobSearch();
+        showSearchPrompt();
+      }, (error) => {
+        console.error('Error loading jobs from Firebase:', error);
+        // Fallback to sample data
+        loadSampleJobs();
+      });
+    }
+
+    // Fallback sample data
+    function loadSampleJobs() {
+      console.log('Using sample data as fallback');
+      allJobs = [
+        {
+          title: "Software Engineer",
+          location: "Hartford, CT",
+          type: "Full-time",
+          category: "Technology",
+          description: "Join our development team to build innovative software solutions.",
+          apply: "#apply-software-engineer",
+          lat: 41.7658,
+          lon: -72.6734
+        },
+        {
+          title: "Registered Nurse",
+          location: "New Haven, CT",
+          type: "Full-time",
+          category: "Healthcare",
+          description: "Provide compassionate care in our modern healthcare facility.",
+          apply: "#apply-nurse",
+          lat: 41.3081,
+          lon: -72.9282
+        },
+        {
+          title: "Administrative Assistant",
+          location: "Stamford, CT",
+          type: "Part-time",
+          category: "Administration",
+          description: "Support our team with administrative tasks and office management.",
+          apply: "#apply-admin",
+          lat: 41.0534,
+          lon: -73.5387
+        }
+      ];
+      
+      populateJobDropdown();
+      setupJobSearch();
+      showSearchPrompt();
+    }
+
+    // Enhanced location features
+    let isGettingLocation = false;
+    let locationWatchId = null;
+
+    // Get current location
+    function getCurrentLocation() {
+      if (isGettingLocation) return;
+      
+      const locationBtn = document.querySelector('.location-btn');
+      const locationIcon = document.getElementById('locationIcon');
+      const locationText = document.getElementById('locationText');
+      const locationInput = document.getElementById('userLocation');
+      
+      if (!navigator.geolocation) {
+        showLocationStatus('Geolocation is not supported by this browser', 'error');
+        return;
+      }
+      
+      isGettingLocation = true;
+      locationBtn.classList.add('loading');
+      locationBtn.disabled = true;
+      locationIcon.textContent = '⏳';
+      locationText.textContent = 'Getting Location...';
+      
+      showLocationStatus('Detecting your location...', 'loading');
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          userLat = position.coords.latitude;
+          userLon = position.coords.longitude;
+          
+          console.log('Location detected:', { lat: userLat, lon: userLon });
+          
+          // Reverse geocode to get city name
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLon}&addressdetails=1`);
+            const data = await response.json();
+            
+            if (data && data.address) {
+              const city = data.address.city || data.address.town || data.address.village;
+              const state = data.address.state;
+              const locationName = city && state ? `${city}, ${state}` : data.display_name;
+              
+              locationInput.value = locationName;
+              locationInput.classList.remove('location-error', 'location-loading');
+              
+              showLocationStatus(`📍 Located: ${locationName}`, 'success');
+              
+              // Update button
+              locationBtn.classList.remove('loading');
+              locationBtn.classList.add('success');
+              locationIcon.textContent = '✅';
+              locationText.textContent = 'Location Found';
+              
+              // Auto-filter jobs
+              filterJobs();
+              
+            } else {
+              throw new Error('Unable to get location name');
+            }
+          } catch (error) {
+            console.warn('Reverse geocoding failed:', error);
+            locationInput.value = `${userLat.toFixed(4)}, ${userLon.toFixed(4)}`;
+            showLocationStatus('📍 Location found (coordinates)', 'success');
+            
+            locationBtn.classList.remove('loading');
+            locationBtn.classList.add('success');
+            locationIcon.textContent = '✅';
+            locationText.textContent = 'Location Found';
+            
+            filterJobs();
+          }
+          
+          isGettingLocation = false;
+          locationBtn.disabled = false;
+          
+          // Reset button after 3 seconds
+          setTimeout(resetLocationButton, 3000);
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          
+          let errorMessage = 'Unable to get your location';
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = 'Location access denied. Please enable location permissions.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = 'Location information is unavailable.';
+              break;
+            case error.TIMEOUT:
+              errorMessage = 'Location request timed out.';
+              break;
+          }
+          
+          showLocationStatus(errorMessage, 'error');
+          
+          locationBtn.classList.remove('loading');
+          locationBtn.classList.add('error');
+          locationIcon.textContent = '❌';
+          locationText.textContent = 'Location Failed';
+          
+          isGettingLocation = false;
+          locationBtn.disabled = false;
+          
+          // Reset button after 3 seconds
+          setTimeout(resetLocationButton, 3000);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
+        }
+      );
+    }
+
+    // Reset location button
+    function resetLocationButton() {
+      const locationBtn = document.querySelector('.location-btn');
+      const locationIcon = document.getElementById('locationIcon');
+      const locationText = document.getElementById('locationText');
+      
+      locationBtn.classList.remove('loading', 'success', 'error');
+      locationIcon.textContent = '📍';
+      locationText.textContent = 'Use Current';
+      
+      hideLocationStatus();
+    }
+
+    // Show location status
+    function showLocationStatus(message, type) {
+      let statusEl = document.querySelector('.location-status');
+      
+      if (!statusEl) {
+        statusEl = document.createElement('div');
+        statusEl.className = 'location-status';
+        document.querySelector('.location-container').appendChild(statusEl);
+      }
+      
+      statusEl.textContent = message;
+      statusEl.className = `location-status ${type}`;
+      statusEl.style.display = 'block';
+      
+      // Auto-hide after 5 seconds for non-loading states
+      if (type !== 'loading') {
+        setTimeout(() => {
+          if (statusEl.classList.contains(type)) {
+            hideLocationStatus();
+          }
+        }, 5000);
+      }
+    }
+
+    // Hide location status
+    function hideLocationStatus() {
+      const statusEl = document.querySelector('.location-status');
+      if (statusEl) {
+        statusEl.style.display = 'none';
+      }
+    }
+
+    // Enhanced setup location autocomplete
+    function setupLocationAutocomplete() {
+      const locationInput = document.getElementById('userLocation');
+      const locationDropdown = document.getElementById('locationDropdown');
+      
+      locationInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        // Clear stored coordinates when user types
+        userLat = null;
+        userLon = null;
+        resetLocationButton();
+        
+        clearTimeout(locationTimeout);
+        
+        if (query.length < 2) {
+          locationDropdown.style.display = 'none';
+          return;
+        }
+
+        locationTimeout = setTimeout(async () => {
+          try {
+            const suggestions = await getLocationSuggestions(query);
+            
+            if (suggestions.length > 0) {
+              locationDropdown.innerHTML = suggestions.map(suggestion => {
+                // Calculate distance from user's current position if available
+                let distanceText = '';
+                if (userLat && userLon) {
+                  const distance = calculateDistance(userLat, userLon, suggestion.lat, suggestion.lon);
+                  distanceText = ` <span class="distance-badge">${distance.toFixed(1)} mi</span>`;
+                }
+                
+                return `
+                  <div class="location-dropdown-item" onclick="selectLocationSuggestion('${suggestion.display_name.replace(/'/g, "\\'")}', ${suggestion.lat}, ${suggestion.lon})">
+                    <div class="location-main">${suggestion.name}${distanceText}</div>
+                    <div class="location-sub">${suggestion.display_name}</div>
+                  </div>
+                `;
+              }).join('');
+              locationDropdown.style.display = 'block';
+            } else {
+              locationDropdown.style.display = 'none';
+            }
+          } catch (error) {
+            console.error('Error getting location suggestions:', error);
+            locationDropdown.style.display = 'none';
+          }
+        }, 300);
+      });
+
+      locationInput.addEventListener('blur', function() {
+        setTimeout(() => {
+          locationDropdown.style.display = 'none';
+        }, 200);
+      });
+    }
+
+    // Enhanced get location suggestions
+    async function getLocationSuggestions(query) {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1`);
+        const data = await response.json();
+        
+        return data.map(item => ({
+          lat: parseFloat(item.lat),
+          lon: parseFloat(item.lon),
+          display_name: item.display_name,
+          name: item.address?.city || item.address?.town || item.address?.village || item.name || item.display_name.split(',')[0]
+        }));
+      } catch (error) {
+        console.error('Geocoding error:', error);
+        return [];
+      }
+    }
+
+    // Enhanced select location suggestion
+    function selectLocationSuggestion(displayName, lat, lon) {
+      const locationInput = document.getElementById('userLocation');
+      const locationDropdown = document.getElementById('locationDropdown');
+      
+      locationInput.value = displayName;
+      locationDropdown.style.display = 'none';
+      
+      userLat = lat;
+      userLon = lon;
+      
+      locationInput.classList.remove('location-error', 'location-loading');
+      locationInput.placeholder = 'Enter your city or ZIP';
+      
+      showLocationStatus(`📍 Selected: ${displayName}`, 'success');
+      
+      filterJobs();
+    }
+
+    // Populate job dropdown with all available jobs
+    function populateJobDropdown() {
+      const jobSelect = document.getElementById('jobSearch');
+      
+      // Clear existing options except the first one
+      jobSelect.innerHTML = '<option value="">Select a job title...</option>';
+      
+      if (allJobs.length === 0) {
+        jobSelect.innerHTML += '<option value="" disabled>No jobs available</option>';
+        return;
+      }
+
+      // Sort jobs by category, then by title
+      const sortedJobs = [...allJobs].sort((a, b) => {
+        if (a.category !== b.category) {
+          return a.category.localeCompare(b.category);
+        }
+        return a.title.localeCompare(b.title);
+      });
+
+      // Group jobs by category
+      const categories = {};
+      sortedJobs.forEach(job => {
+        if (!categories[job.category]) {
+          categories[job.category] = [];
+        }
+        categories[job.category].push(job);
+      });
+
+      // Add optgroups for each category
+      Object.keys(categories).forEach(category => {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = `${category} (${categories[category].length} jobs)`;
+        
+        categories[category].forEach(job => {
+          const option = document.createElement('option');
+          option.value = job.title;
+          option.textContent = `${job.title} - ${job.location} ${job.salary ? '• ' + job.salary : ''}`;
+          option.dataset.jobId = job.id;
+          option.dataset.category = job.category;
+          optgroup.appendChild(option);
+        });
+        
+        jobSelect.appendChild(optgroup);
+      });
+    }
+
+    function setupJobSearch() {
+      const jobSelect = document.getElementById('jobSearch');
+      
+      jobSelect.addEventListener('change', function() {
+        const selectedTitle = this.value;
+        
+        if (selectedTitle) {
+          selectedJobTitle = selectedTitle;
+          filterJobs();
+        } else {
+          selectedJobTitle = '';
+          if (!hasSearched) {
+            showSearchPrompt();
+          } else {
+            filterJobs();
+          }
+        }
+      });
+    }
+
+    function showSearchPrompt() {
+      const container = document.getElementById('results');
+      container.innerHTML = `
+        <div class="search-prompt">
+          <h3>Find Your Perfect Job</h3>
+          <p>Use the filters above to search for jobs by title, location, or distance. We have ${allJobs.length} current openings waiting for you!</p>
+          <p><strong>Pro tip:</strong> Click "Current Location" to automatically find jobs near you, or enter your city/ZIP code to search specific areas.</p>
+        </div>
+      `;
+    }
+
+    function showAllJobs() {
+      clearFilters();
+      hasSearched = true;
+      currentJobs = allJobs;
+      renderJobs(allJobs);
+    }
+
+    function clearFilters() {
+      document.getElementById('userLocation').value = '';
+      document.getElementById('jobSearch').value = '';
+      document.getElementById('distanceFilter').value = '';
+      
+      userLat = null;
+      userLon = null;
+      selectedJobTitle = '';
+      hasSearched = false;
+      
+      document.getElementById('locationDropdown').style.display = 'none';
+      document.getElementById('userLocation').classList.remove('location-error', 'location-loading');
+      document.getElementById('userLocation').placeholder = 'Enter your city or ZIP';
+      
+      // Reset location button
+      resetLocationButton();
+      hideLocationStatus();
+      
+      showSearchPrompt();
+    }
+
+    async function geocodeLocation(location) {
+      if (geocodeCache.has(location)) {
+        return geocodeCache.get(location);
+      }
+
+      try {
+        const searchQueries = [];
+        
+        if (/^\d{5}$/.test(location)) {
+          searchQueries.push(`${location}, CT, USA`);
+          searchQueries.push(`${location}, Connecticut, USA`);
+        } else if (!location.includes(',')) {
+          searchQueries.push(`${location}, CT, USA`);
+          searchQueries.push(`${location}, Connecticut, USA`);
+          searchQueries.push(`${location}, Connecticut`);
+        } else {
+          searchQueries.push(location);
+        }
+        
+        for (const query of searchQueries) {
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+          const data = await response.json();
+          
+          if (data.length > 0) {
+            const result = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+            geocodeCache.set(location, result);
+            return result;
+          }
+        }
+        
+        geocodeCache.set(location, null);
+        return null;
+      } catch (error) {
+        console.error('Geocoding error:', error);
+        geocodeCache.set(location, null);
+        return null;
+      }
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 3958.8;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    async function filterJobs() {
+      const title = selectedJobTitle;
+      const distance = document.getElementById('distanceFilter').value;
+      const userLocation = document.getElementById('userLocation').value;
+
+      const hasFilters = title || distance || userLocation;
+      
+      if (!hasFilters) {
+        showSearchPrompt();
+        return;
+      }
+
+      hasSearched = true;
+      isLoading = true;
+
+      if (userLocation && !userLat && !userLon) {
+        const locationInput = document.getElementById('userLocation');
+        locationInput.classList.remove('location-error');
+        locationInput.classList.add('location-loading');
+        locationInput.placeholder = 'Looking up location...';
+        
+        const coords = await geocodeLocation(userLocation);
+        locationInput.classList.remove('location-loading');
+        
+        if (coords) {
+          userLat = coords.lat;
+          userLon = coords.lon;
+          locationInput.placeholder = 'Enter your city or ZIP';
+        } else {
+          locationInput.classList.add('location-error');
+          locationInput.placeholder = 'Location not found - try city name or ZIP';
+          userLat = null;
+          userLon = null;
+        }
+      }
+
+      const filtered = allJobs.filter(job => {
+        const matchTitle = title ? job.title === title : true;
+        let matchDistance = true;
+
+        if (distance && userLat && userLon && job.lat && job.lon) {
+          const d = calculateDistance(userLat, userLon, job.lat, job.lon);
+          matchDistance = d <= parseFloat(distance);
+        }
+
+        return matchTitle && matchDistance;
+      });
+
+      currentJobs = filtered;
+      isLoading = false;
+      renderJobs(filtered);
+    }
+
+    function renderJobs(jobs) {
+      const container = document.getElementById('results');
+      
+      if (jobs.length === 0) {
+        container.innerHTML = `
+          <div class="search-prompt no-results">
+            <h3>No jobs found</h3>
+            <p>Try adjusting your search criteria or clearing filters to see all available positions.</p>
+            <button class="show-all-btn" onclick="clearFilters()" style="margin-top: 15px;">Clear All Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      // Add results header
+      const hasDistance = userLat && userLon;
+      
+      let headerContent = `
+        <div class="results-header">
+          <div class="results-count">
+            Found ${jobs.length} job${jobs.length === 1 ? '' : 's'}
+          </div>
+          <div class="sort-controls">
+            ${hasDistance ? `<button class="show-all-btn" onclick="sortByDistance()">Sort by Distance</button>` : ''}
+          </div>
+        </div>
+      `;
+
+      const categories = {};
+
+      jobs.forEach(job => {
+        if (userLat && userLon && job.lat && job.lon) {
+          job.distance = calculateDistance(userLat, userLon, job.lat, job.lon);
+        }
+        
+        if (!categories[job.category]) {
+          categories[job.category] = [];
+        }
+        categories[job.category].push(job);
+      });
+
+      for (const category in categories) {
+        categories[category].sort((a, b) => {
+          if (a.distance && b.distance) {
+            return a.distance - b.distance;
+          }
+          return 0;
+        });
+      }
+
+      container.innerHTML = headerContent;
+
+      for (const category in categories) {
+        container.innerHTML += `<div class="category">${category}</div>`;
+        categories[category].forEach(job => {
+          const jobMeta = [
+            `<span>${job.type}</span>`,
+            job.salary ? `<span>${job.salary}</span>` : '',
+            job.distance ? `<span class="distance-badge">${job.distance.toFixed(1)} miles away</span>` : ''
+          ].filter(Boolean).join('');
+          
+          container.innerHTML += `
+            <div class="job">
+              <h3>${job.title}</h3>
+              <div class="job-meta">
+                <span>${job.location}</span>
+                ${jobMeta}
+              </div>
+              <p>${job.description}</p>
+              <a href="${job.apply}" target="_blank">Apply Now</a>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function sortByDistance() {
+      if (!userLat || !userLon || currentJobs.length === 0) return;
+      
+      const sortedJobs = [...currentJobs].sort((a, b) => {
+        const distA = a.lat && a.lon ? calculateDistance(userLat, userLon, a.lat, a.lon) : Infinity;
+        const distB = b.lat && b.lon ? calculateDistance(userLat, userLon, b.lat, b.lon) : Infinity;
+        return distA - distB;
+      });
+      
+      renderJobsSorted(sortedJobs);
+    }
+
+    function renderJobsSorted(jobs) {
+      const container = document.getElementById('results');
+      
+      const headerContent = `
+        <div class="results-header">
+          <div class="results-count">
+            ${jobs.length} job${jobs.length === 1 ? '' : 's'} sorted by distance
+          </div>
+          <div class="sort-controls">
+            <button class="show-all-btn" onclick="filterJobs()">Group by Category</button>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = headerContent + `<div class="category">All Jobs (Sorted by Distance)</div>`;
+      
+      jobs.forEach(job => {
+        const distance = job.lat && job.lon ? calculateDistance(userLat, userLon, job.lat, job.lon) : null;
+        const jobMeta = [
+          `<span>${job.type}</span>`,
+          `<span>${job.category}</span>`,
+          job.salary ? `<span>${job.salary}</span>` : '',
+          distance ? `<span class="distance-badge">${distance.toFixed(1)} miles away</span>` : ''
+        ].filter(Boolean).join('');
+        
+        container.innerHTML += `
+          <div class="job">
+            <h3>${job.title}</h3>
+            <div class="job-meta">
+              <span>${job.location}</span>
+              ${jobMeta}
+            </div>
+            <p>${job.description}</p>
+            <a href="${job.apply}" target="_blank">Apply Now</a>
+          </div>
+        `;
+      });
+    }
+
+    // Event listeners
+    document.getElementById('distanceFilter').addEventListener('change', filterJobs);
+    document.getElementById('userLocation').addEventListener('input', () => {
+      const locationInput = document.getElementById('userLocation');
+      locationInput.classList.remove('location-error', 'location-loading');
+      locationInput.placeholder = 'Enter your city or ZIP';
+      
+      // Clear stored coordinates when user types new location
+      userLat = null;
+      userLon = null;
+      
+      clearTimeout(window.locationTimeout);
+      window.locationTimeout = setTimeout(filterJobs, 500);
+    });
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', () => {
+      setupLocationAutocomplete();
+      loadJobsFromFirebase();
+    });
+  </script>
+
+</body>
+</html>

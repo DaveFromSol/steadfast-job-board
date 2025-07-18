@@ -1,0 +1,53 @@
+[
+    {
+      "title": "Warehouse Associate",
+      "location": "Berlin, CT",
+      "type": "Full-Time",
+      "description": "Assist with daily warehouse operations including inventory and shipping.",
+      "apply": "mailto:apply@steadfaststaffing.com?subject=Warehouse Associate",
+      "category": "Warehouse & Logistics",
+      "lat": 41.6215,
+      "lon": -72.7457
+    },
+    {
+      "title": "Medical Receptionist",
+      "location": "Newington, CT",
+      "type": "Part-Time",
+      "description": "Manage front desk, schedule appointments, and greet patients.",
+      "apply": "mailto:apply@steadfaststaffing.com?subject=Medical Receptionist",
+      "category": "Healthcare",
+      "lat": 41.6970,
+      "lon": -72.7230
+    },
+    {
+      "title": "Administrative Assistant",
+      "location": "Hartford, CT",
+      "type": "Full-Time",
+      "description": "Assist with office operations, scheduling, and documentation.",
+      "apply": "mailto:apply@steadfaststaffing.com?subject=Admin Assistant",
+      "category": "Administrative",
+      "lat": 41.7658,
+      "lon": -72.6734
+    },
+    {
+      "title": "Certified Nursing Assistant (CNA)",
+      "location": "Southington, CT",
+      "type": "Full-Time",
+      "description": "Provide direct patient care and support medical staff.",
+      "apply": "mailto:apply@steadfaststaffing.com?subject=CNA Application",
+      "category": "Healthcare",
+      "lat": 41.5965,
+      "lon": -72.8770
+    },
+    {
+      "title": "Forklift Operator",
+      "location": "Middletown, CT",
+      "type": "Full-Time",
+      "description": "Operate forklifts and handle materials in a logistics center.",
+      "apply": "mailto:apply@steadfaststaffing.com?subject=Forklift Operator",
+      "category": "Warehouse & Logistics",
+      "lat": 41.5623,
+      "lon": -72.6506
+    }
+  ]
+  

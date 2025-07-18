@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job - Steadfast Staffing</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1a202c;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .help-text {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .location-wrapper {
+            position: relative;
+        }
+
+        .location-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .location-suggestion {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f7fafc;
+            transition: background-color 0.2s;
+        }
+
+        .location-suggestion:hover {
+            background-color: #f7fafc;
+        }
+
+        .location-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-main {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .suggestion-sub {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 2px;
+        }
+
+        .distance-badge {
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-message.success {
+            background: #f0fff4;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status-message.error {
+            background: #fff5f5;
+            color: #c53030;
+            border: 1px solid #fed7d7;
+        }
+
+        .status-message.loading {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border: 1px solid #90cdf4;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: #38a169;
+        }
+
+        .btn-success:hover {
+            background: #2f855a;
+        }
+
+        .btn-secondary {
+            background: #718096;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .back-btn {
+                position: static;
+                display: inline-block;
+                margin-bottom: 16px;
+            }
+            
+            .header {
+                text-align: left;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="admin.html" class="back-btn">← Back</a>
+            <h1>Create Job Posting</h1>
+            <p>Add a new job to your platform</p>
+        </div>
+
+        <div class="form-card">
+            <div id="statusMessage" class="status-message"></div>
+            
+            <form id="jobForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Job Title <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="jobTitle" required 
+                               placeholder="e.g. Software Engineer">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Job Type <span class="required">*</span></label>
+                        <select class="form-input" id="jobType" required>
+                            <option value="">Select type</option>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location <span class="required">*</span></label>
+                    <div class="location-wrapper">
+                        <input type="text" class="form-input" id="jobLocation" required 
+                               placeholder="Start typing city or 'Remote'..." autocomplete="off">
+                        <div id="locationSuggestions" class="location-suggestions"></div>
+                    </div>
+                    <div class="help-text">Type to search locations or enter "Remote"</div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Category <span class="required">*</span></label>
+                        <select class="form-input" id="jobCategory" required>
+                            <option value="">Select category</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Customer Service">Customer Service</option>
+                            <option value="Administration">Administration</option>
+                            <option value="Education">Education</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Salary</label>
+                        <input type="text" class="form-input" id="jobSalary" 
+                               placeholder="e.g. $50,000 - $70,000">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description <span class="required">*</span></label>
+                    <textarea class="form-input form-textarea" id="jobDescription" required 
+                              placeholder="Describe the role, responsibilities, and requirements..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Application URL <span class="required">*</span></label>
+                    <input type="url" class="form-input" id="jobApplyUrl" required 
+                           placeholder="https://...">
+                    <div class="help-text">Where candidates can apply</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="saveDraftBtn">Save Draft</button>
+                    <button type="submit" class="btn btn-success" id="publishBtn">
+                        <span class="btn-text">Publish Job</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDtgmr4F5uRh4M_6OVQAd-7X3ZyLqmS0-I",
+            authDomain: "steadfast-staffing.firebaseapp.com",
+            databaseURL: "https://steadfast-staffing-default-rtdb.firebaseio.com",
+            projectId: "steadfast-staffing",
+            storageBucket: "steadfast-staffing.firebasestorage.app",
+            messagingSenderId: "447949048982",
+            appId: "1:447949048982:web:ae07174035184d4d0a86b7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let currentUser = null;
+        let userLocation = null;
+        let geocodeTimeout = null;
+
+        // Status message functions
+        function showStatus(message, type = 'loading') {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${type}`;
+            statusEl.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Authentication
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                console.log('User authenticated:', user.email);
+                detectUserLocation();
+            } else {
+                window.location.href = 'admin.html';
+            }
+        });
+
+        // Detect user location
+        function detectUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude
+                        };
+                        console.log('User location detected');
+                    },
+                    (error) => {
+                        console.log('Geolocation not available');
+                    },
+                    { timeout: 5000, enableHighAccuracy: false }
+                );
+            }
+        }
+
+        // Distance calculation
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3959; // Earth's radius in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Geocoding function
+        async function geocodeLocation(query) {
+            if (!query || query.length < 2) return [];
+            
+            if (query.toLowerCase().includes('remote')) {
+                return [{ remote: true, display_name: 'Remote Work' }];
+            }
+
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`
+                );
+                const data = await response.json();
+                
+                return data.map(item => ({
+                    lat: parseFloat(item.lat),
+                    lon: parseFloat(item.lon),
+                    display_name: item.display_name,
+                    city: item.address?.city || item.address?.town,
+                    state: item.address?.state,
+                    country: item.address?.country
+                }));
+            } catch (error) {
+                console.warn('Geocoding error:', error);
+                return [];
+            }
+        }
+
+        // Setup location autocomplete
+        function setupLocationAutocomplete() {
+            const locationInput = document.getElementById('jobLocation');
+            const suggestionsDiv = document.getElementById('locationSuggestions');
+            
+            locationInput.addEventListener('input', async (e) => {
+                const query = e.target.value.trim();
+                
+                clearTimeout(geocodeTimeout);
+                
+                if (query.length < 2) {
+                    suggestionsDiv.style.display = 'none';
+                    return;
+                }
+
+                geocodeTimeout = setTimeout(async () => {
+                    try {
+                        const results = await geocodeLocation(query);
+                        
+                        if (results.length > 0) {
+                            suggestionsDiv.innerHTML = results.map(result => {
+                                if (result.remote) {
+                                    return `
+                                        <div class="location-suggestion" onclick="selectLocation('Remote', null)">
+                                            <div class="suggestion-main">🌐 Remote</div>
+                                            <div class="suggestion-sub">Work from anywhere</div>
+                                        </div>
+                                    `;
+                                }
+                                
+                                let displayText = result.display_name;
+                                if (result.city && result.state) {
+                                    displayText = `${result.city}, ${result.state}`;
+                                }
+                                
+                                let distanceText = '';
+                                if (userLocation && result.lat && result.lon) {
+                                    const distance = calculateDistance(
+                                        userLocation.lat, userLocation.lon, 
+                                        result.lat, result.lon
+                                    );
+                                    distanceText = `<span class="distance-badge">${distance.toFixed(0)} mi</span>`;
+                                }
+                                
+                                return `
+                                    <div class="location-suggestion" onclick="selectLocation('${displayText}', ${JSON.stringify(result).replace(/"/g, '&quot;')})">
+                                        <div class="suggestion-main">${displayText} ${distanceText}</div>
+                                        <div class="suggestion-sub">${result.display_name}</div>
+                                    </div>
+                                `;
+                            }).join('');
+                            suggestionsDiv.style.display = 'block';
+                        } else {
+                            suggestionsDiv.style.display = 'none';
+                        }
+                    } catch (error) {
+                        console.error('Location search error:', error);
+                        suggestionsDiv.style.display = 'none';
+                    }
+                }, 300);
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!locationInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                    suggestionsDiv.style.display = 'none';
+                }
+            });
+        }
+
+        // Select location
+        function selectLocation(displayText, locationData) {
+            const locationInput = document.getElementById('jobLocation');
+            const suggestionsDiv = document.getElementById('locationSuggestions');
+            
+            locationInput.value = displayText;
+            suggestionsDiv.style.display = 'none';
+            locationInput.locationData = locationData;
+        }
+
+        // Form validation
+        function validateForm() {
+            const title = document.getElementById('jobTitle').value.trim();
+            const type = document.getElementById('jobType').value;
+            const location = document.getElementById('jobLocation').value.trim();
+            const category = document.getElementById('jobCategory').value;
+            const description = document.getElementById('jobDescription').value.trim();
+            const applyUrl = document.getElementById('jobApplyUrl').value.trim();
+
+            if (!title || !type || !location || !category || !description || !applyUrl) {
+                showStatus('Please fill in all required fields', 'error');
+                return false;
+            }
+
+            try {
+                new URL(applyUrl);
+            } catch {
+                showStatus('Please enter a valid application URL', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Get form data
+        function getFormData(status = 'active') {
+            const locationInput = document.getElementById('jobLocation');
+            const locationData = locationInput.locationData;
+            
+            const jobData = {
+                title: document.getElementById('jobTitle').value.trim(),
+                type: document.getElementById('jobType').value,
+                location: document.getElementById('jobLocation').value.trim(),
+                category: document.getElementById('jobCategory').value,
+                salary: document.getElementById('jobSalary').value.trim(),
+                description: document.getElementById('jobDescription').value.trim(),
+                apply: document.getElementById('jobApplyUrl').value.trim(),
+                status: status,
+                datePosted: new Date().toISOString(),
+                createdBy: currentUser.uid
+            };
+
+            // Add location coordinates if available
+            if (locationData && locationData.lat && locationData.lon) {
+                jobData.lat = locationData.lat;
+                jobData.lon = locationData.lon;
+            }
+
+            return jobData;
+        }
+
+        // Save job to Firebase
+        async function saveJob(status = 'active') {
+            if (!validateForm()) return false;
+
+            const jobData = getFormData(status);
+            
+            try {
+                const newJobRef = database.ref('jobs').push();
+                await newJobRef.set(jobData);
+                
+                console.log('Job saved successfully:', newJobRef.key);
+                return { success: true, id: newJobRef.key };
+            } catch (error) {
+                console.error('Error saving job:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Form submission
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const publishBtn = document.getElementById('publishBtn');
+            const btnText = publishBtn.querySelector('.btn-text');
+            
+            publishBtn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span>Publishing...';
+            showStatus('Publishing job posting...', 'loading');
+            
+            try {
+                const result = await saveJob('active');
+                
+                if (result.success) {
+                    showStatus('Job published successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1500);
+                } else {
+                    showStatus('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            } finally {
+                publishBtn.disabled = false;
+                btnText.textContent = 'Publish Job';
+            }
+        });
+
+        // Save draft
+        document.getElementById('saveDraftBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const draftBtn = e.target;
+            const originalText = draftBtn.textContent;
+            
+            draftBtn.disabled = true;
+            draftBtn.innerHTML = '<span class="spinner"></span>Saving...';
+            showStatus('Saving draft...', 'loading');
+            
+            try {
+                const result = await saveJob('draft');
+                
+                if (result.success) {
+                    showStatus('Draft saved successfully!', 'success');
+                } else {
+                    showStatus('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            } finally {
+                draftBtn.disabled = false;
+                draftBtn.textContent = originalText;
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupLocationAutocomplete();
+            console.log('Create job page initialized');
+        });
+    </script>
+</body>
+</html>
