@@ -223,6 +223,10 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn:hover {
@@ -250,6 +254,14 @@
 
         .btn-success:hover {
             background: #2f855a;
+        }
+
+        .btn-applications {
+            background: #805ad5;
+        }
+
+        .btn-applications:hover {
+            background: #6b46c1;
         }
 
         .search-controls {
@@ -481,6 +493,19 @@
             border: 1px solid #feb2b2;
         }
 
+        /* Quick Actions Section */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quick-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -497,6 +522,10 @@
             .job-header {
                 flex-direction: column;
                 gap: 15px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -558,7 +587,7 @@
                     <h2 class="section-title">Job Management</h2>
                     <button class="btn" onclick="window.location.href='create-job.html'">Create New Job</button>
                 </div>
-                </div>
+                
                 <div class="search-controls">
                     <input type="text" class="search-input" id="searchJobs" placeholder="Search jobs...">
                     <select class="filter-select" id="categoryFilter">
@@ -580,6 +609,29 @@
             </div>
 
             <div class="sidebar">
+                <div class="form-card">
+                    <h3 class="section-title">Quick Actions</h3>
+                    
+                    <div class="quick-actions">
+                        <a href="applications.html" class="btn btn-applications">
+                            📋 View Applications
+                        </a>
+                        <a href="create-job.html" class="btn">
+                            ➕ Create Job
+                        </a>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="exportJobs()" style="width: 100%; margin-bottom: 10px;">
+                        📊 Export Jobs Data
+                    </button>
+                    <button class="btn" onclick="bulkUpdateStatus()" style="width: 100%; margin-bottom: 10px;">
+                        🔄 Bulk Update Status
+                    </button>
+                    <button class="btn btn-danger" onclick="confirmBulkDelete()" style="width: 100%;">
+                        🗑️ Delete Inactive Jobs
+                    </button>
+                </div>
+
                 <div class="analytics-card">
                     <h3 class="section-title">Quick Analytics</h3>
                     <div class="chart-container">
@@ -590,19 +642,6 @@
                             <p>Popular Locations</p>
                         </div>
                     </div>
-                </div>
-
-                <div class="form-card">
-                    <h3 class="section-title">Quick Actions</h3>
-                    <button class="btn btn-success" onclick="exportJobs()" style="width: 100%; margin-bottom: 10px;">
-                        Export Jobs Data
-                    </button>
-                    <button class="btn" onclick="bulkUpdateStatus()" style="width: 100%; margin-bottom: 10px;">
-                        Bulk Update Status
-                    </button>
-                    <button class="btn btn-danger" onclick="confirmBulkDelete()" style="width: 100%;">
-                        Delete Inactive Jobs
-                    </button>
                 </div>
             </div>
         </div>
@@ -703,11 +742,11 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // Firebase configuration - Your actual config
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDtgmr4F5uRh4M_6OVQAd-7X3ZyLqmS0-I",
             authDomain: "steadfast-staffing.firebaseapp.com",
@@ -751,23 +790,6 @@
                 document.getElementById('adminPanel').style.display = 'none';
             }
         });
-
-        // Add this function to your existing JavaScript
-function openAddJobModal() {
-    console.log('Opening add job modal');
-    editingJobId = null;
-    const modalTitle = document.getElementById('modalTitle');
-    const jobForm = document.getElementById('jobForm');
-    const jobStatus = document.getElementById('jobStatus');
-    const modalMessage = document.getElementById('modalMessage');
-    const jobModal = document.getElementById('jobModal');
-    
-    if (modalTitle) modalTitle.textContent = 'Add New Job';
-    if (jobForm) jobForm.reset();
-    if (jobStatus) jobStatus.value = 'active';
-    if (modalMessage) modalMessage.innerHTML = '';
-    if (jobModal) jobModal.style.display = 'block';
-}
 
         // Login form handler
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -902,14 +924,12 @@ function openAddJobModal() {
             
             try {
                 if (isNew) {
-                    // Generate a new key for the job
                     const newJobRef = database.ref('jobs').push();
                     job.id = newJobRef.key;
                     console.log('Generated new job ID:', job.id);
                     await newJobRef.set(job);
                     console.log('New job saved successfully');
                 } else {
-                    // Update existing job
                     console.log('Updating existing job:', job.id);
                     await database.ref(`jobs/${job.id}`).set(job);
                     console.log('Job updated successfully');
@@ -954,12 +974,27 @@ function openAddJobModal() {
             });
         }
 
-        // Update statistics
-        function updateStats() {
+        // Update statistics (load applications count from Firebase)
+        async function updateStats() {
             const totalJobs = jobs.length;
             const activeJobs = jobs.filter(job => job.status === 'active').length;
             const totalCategories = new Set(jobs.map(job => job.category).filter(cat => cat)).size;
-            const recentApplications = Math.floor(Math.random() * 50) + 10; // Simulated
+            
+            // Load recent applications count from Firebase
+            let recentApplications = 0;
+            try {
+                const applicationsSnapshot = await database.ref('applications').once('value');
+                const applicationsData = applicationsSnapshot.val();
+                if (applicationsData) {
+                    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                    recentApplications = Object.values(applicationsData).filter(app => 
+                        app.submittedAt && new Date(app.submittedAt) >= weekAgo
+                    ).length;
+                }
+            } catch (error) {
+                console.warn('Error loading applications count:', error);
+                recentApplications = 0;
+            }
             
             const totalJobsEl = document.getElementById('totalJobs');
             const activeJobsEl = document.getElementById('activeJobs');

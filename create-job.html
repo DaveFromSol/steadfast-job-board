@@ -209,6 +209,62 @@
             border: 1px solid #90cdf4;
         }
 
+        .apply-url-section {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .apply-url-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #cbd5e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(26px);
+        }
+
+        .auto-url-preview {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #4a5568;
+            word-break: break-all;
+            margin-top: 8px;
+        }
+
         .btn {
             background: #667eea;
             color: white;
@@ -310,12 +366,12 @@
                     <div class="form-group">
                         <label class="form-label">Job Title <span class="required">*</span></label>
                         <input type="text" class="form-input" id="jobTitle" required 
-                               placeholder="e.g. Software Engineer">
+                               placeholder="e.g. Software Engineer" oninput="updateApplyUrl()">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Job Type <span class="required">*</span></label>
-                        <select class="form-input" id="jobType" required>
+                        <select class="form-input" id="jobType" required onchange="updateApplyUrl()">
                             <option value="">Select type</option>
                             <option value="Full-time">Full-time</option>
                             <option value="Part-time">Part-time</option>
@@ -330,7 +386,7 @@
                     <label class="form-label">Location <span class="required">*</span></label>
                     <div class="location-wrapper">
                         <input type="text" class="form-input" id="jobLocation" required 
-                               placeholder="Start typing city or 'Remote'..." autocomplete="off">
+                               placeholder="Start typing city or 'Remote'..." autocomplete="off" oninput="updateApplyUrl()">
                         <div id="locationSuggestions" class="location-suggestions"></div>
                     </div>
                     <div class="help-text">Type to search locations or enter "Remote"</div>
@@ -339,7 +395,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Category <span class="required">*</span></label>
-                        <select class="form-input" id="jobCategory" required>
+                        <select class="form-input" id="jobCategory" required onchange="updateApplyUrl()">
                             <option value="">Select category</option>
                             <option value="Technology">Technology</option>
                             <option value="Healthcare">Healthcare</option>
@@ -358,21 +414,39 @@
                     <div class="form-group">
                         <label class="form-label">Salary</label>
                         <input type="text" class="form-input" id="jobSalary" 
-                               placeholder="e.g. $50,000 - $70,000">
+                               placeholder="e.g. $50,000 - $70,000" oninput="updateApplyUrl()">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Description <span class="required">*</span></label>
                     <textarea class="form-input form-textarea" id="jobDescription" required 
-                              placeholder="Describe the role, responsibilities, and requirements..."></textarea>
+                              placeholder="Describe the role, responsibilities, and requirements..." oninput="updateApplyUrl()"></textarea>
                 </div>
 
+                <!-- Apply URL Section -->
                 <div class="form-group">
-                    <label class="form-label">Application URL <span class="required">*</span></label>
-                    <input type="url" class="form-input" id="jobApplyUrl" required 
-                           placeholder="https://...">
-                    <div class="help-text">Where candidates can apply</div>
+                    <label class="form-label">Application Method</label>
+                    <div class="apply-url-section">
+                        <div class="apply-url-toggle">
+                            <div class="toggle-switch active" id="autoUrlToggle" onclick="toggleApplyMethod()">
+                                <div class="toggle-slider"></div>
+                            </div>
+                            <span id="toggleLabel"><strong>Use Our Application Page</strong> (Recommended)</span>
+                        </div>
+                        
+                        <div id="autoUrlSection">
+                            <div class="help-text">Applications will be submitted through your apply.html page and stored in Firebase</div>
+                            <div class="auto-url-preview" id="autoUrlPreview">apply.html</div>
+                        </div>
+                        
+                        <div id="customUrlSection" style="display: none;">
+                            <label class="form-label">Custom Application URL <span class="required">*</span></label>
+                            <input type="url" class="form-input" id="jobApplyUrl" 
+                                   placeholder="https://...">
+                            <div class="help-text">External URL where candidates can apply</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-actions">
@@ -410,6 +484,62 @@
         let currentUser = null;
         let userLocation = null;
         let geocodeTimeout = null;
+        let useAutoUrl = true;
+
+        // Toggle apply method
+        function toggleApplyMethod() {
+            useAutoUrl = !useAutoUrl;
+            const toggle = document.getElementById('autoUrlToggle');
+            const toggleLabel = document.getElementById('toggleLabel');
+            const autoSection = document.getElementById('autoUrlSection');
+            const customSection = document.getElementById('customUrlSection');
+            const customUrlInput = document.getElementById('jobApplyUrl');
+            
+            if (useAutoUrl) {
+                toggle.classList.add('active');
+                toggleLabel.innerHTML = '<strong>Use Our Application Page</strong> (Recommended)';
+                autoSection.style.display = 'block';
+                customSection.style.display = 'none';
+                customUrlInput.required = false;
+                updateApplyUrl();
+            } else {
+                toggle.classList.remove('active');
+                toggleLabel.innerHTML = '<strong>Use Custom URL</strong>';
+                autoSection.style.display = 'none';
+                customSection.style.display = 'block';
+                customUrlInput.required = true;
+            }
+        }
+
+        // Update apply URL preview
+        function updateApplyUrl() {
+            if (!useAutoUrl) return;
+            
+            const title = document.getElementById('jobTitle').value;
+            const location = document.getElementById('jobLocation').value;
+            const type = document.getElementById('jobType').value;
+            const category = document.getElementById('jobCategory').value;
+            const salary = document.getElementById('jobSalary').value;
+            const description = document.getElementById('jobDescription').value;
+            
+            const preview = document.getElementById('autoUrlPreview');
+            
+            if (!title && !location) {
+                preview.textContent = 'apply.html (Fill in job details to see full URL)';
+                return;
+            }
+            
+            const params = new URLSearchParams();
+            if (title) params.append('title', title);
+            if (location) params.append('location', location);
+            if (type) params.append('type', type);
+            if (category) params.append('category', category);
+            if (salary) params.append('salary', salary);
+            if (description) params.append('description', description.substring(0, 200) + (description.length > 200 ? '...' : ''));
+            
+            const url = `apply.html?${params.toString()}`;
+            preview.textContent = url;
+        }
 
         // Status message functions
         function showStatus(message, type = 'loading') {
@@ -573,6 +703,7 @@
             locationInput.value = displayText;
             suggestionsDiv.style.display = 'none';
             locationInput.locationData = locationData;
+            updateApplyUrl();
         }
 
         // Form validation
@@ -582,18 +713,24 @@
             const location = document.getElementById('jobLocation').value.trim();
             const category = document.getElementById('jobCategory').value;
             const description = document.getElementById('jobDescription').value.trim();
-            const applyUrl = document.getElementById('jobApplyUrl').value.trim();
 
-            if (!title || !type || !location || !category || !description || !applyUrl) {
+            if (!title || !type || !location || !category || !description) {
                 showStatus('Please fill in all required fields', 'error');
                 return false;
             }
 
-            try {
-                new URL(applyUrl);
-            } catch {
-                showStatus('Please enter a valid application URL', 'error');
-                return false;
+            if (!useAutoUrl) {
+                const applyUrl = document.getElementById('jobApplyUrl').value.trim();
+                if (!applyUrl) {
+                    showStatus('Please enter an application URL', 'error');
+                    return false;
+                }
+                try {
+                    new URL(applyUrl);
+                } catch {
+                    showStatus('Please enter a valid application URL', 'error');
+                    return false;
+                }
             }
 
             return true;
@@ -604,17 +741,41 @@
             const locationInput = document.getElementById('jobLocation');
             const locationData = locationInput.locationData;
             
+            const title = document.getElementById('jobTitle').value.trim();
+            const location = document.getElementById('jobLocation').value.trim();
+            const type = document.getElementById('jobType').value;
+            const category = document.getElementById('jobCategory').value;
+            const salary = document.getElementById('jobSalary').value.trim();
+            const description = document.getElementById('jobDescription').value.trim();
+            
+            let applyUrl;
+            if (useAutoUrl) {
+                // Generate apply URL with parameters
+                const params = new URLSearchParams();
+                params.append('title', title);
+                params.append('location', location);
+                params.append('type', type);
+                params.append('category', category);
+                if (salary) params.append('salary', salary);
+                params.append('description', description);
+                
+                applyUrl = `apply.html?${params.toString()}`;
+            } else {
+                applyUrl = document.getElementById('jobApplyUrl').value.trim();
+            }
+            
             const jobData = {
-                title: document.getElementById('jobTitle').value.trim(),
-                type: document.getElementById('jobType').value,
-                location: document.getElementById('jobLocation').value.trim(),
-                category: document.getElementById('jobCategory').value,
-                salary: document.getElementById('jobSalary').value.trim(),
-                description: document.getElementById('jobDescription').value.trim(),
-                apply: document.getElementById('jobApplyUrl').value.trim(),
+                title: title,
+                type: type,
+                location: location,
+                category: category,
+                salary: salary,
+                description: description,
+                apply: applyUrl,
                 status: status,
                 datePosted: new Date().toISOString(),
-                createdBy: currentUser.uid
+                createdBy: currentUser.uid,
+                usesInternalApply: useAutoUrl
             };
 
             // Add location coordinates if available
@@ -659,7 +820,7 @@
                 const result = await saveJob('active');
                 
                 if (result.success) {
-                    showStatus('Job published successfully!', 'success');
+                    showStatus('Job published successfully! Apply URL automatically generated.', 'success');
                     setTimeout(() => {
                         window.location.href = 'admin.html';
                     }, 1500);
@@ -704,6 +865,7 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             setupLocationAutocomplete();
+            updateApplyUrl();
             console.log('Create job page initialized');
         });
     </script>
